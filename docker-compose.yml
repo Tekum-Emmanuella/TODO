@@ -5,8 +5,16 @@ services:
     container_name: todo-backend
     ports:
       - "5000:5000"
+    networks:
+      - todo-app-network
   frontend:
     build: ./frontend
     container_name: todo-frontend
     ports:
       - "3000:80"
+    networks:
+      - todo-app-network
+
+networks:
+  todo-app-network:
+    driver: bridge
