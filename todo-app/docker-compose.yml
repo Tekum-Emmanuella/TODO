@@ -1,26 +1,62 @@
 version: "3.9"
+
 services:
-  backend:
-    build:
-      context: ./backend
-      args:
-        PORT: ${BACKEND_PORT}
-    container_name: todo-backend
-    ports:
-      - "${BACKEND_PORT}:5000"
-    networks:
-      - todo-app-network
   frontend:
     build:
       context: ./frontend
+      target: runner 
       args:
         PORT: ${FRONTEND_PORT}
-    container_name: todo-frontend
-    ports:
-      - "${FRONTEND_PORT}:80"
+    container_name: student-notebook-frontend
+   
     networks:
-      - todo-app-network
+      - student-notebook-network
+  backend:
+    build:
+      context: ./backend
+      target: runner 
+      args:
+        PORT: ${BACKEND_PORT}
+    container_name: student-notebook-backend
+    environment:
+      PORT: ${BACKEND_PORT}
+    volumes:
+   
+      - uploads-data:/app/uploads
+   
+      - notes-data:/app/notes.json
+   
+    networks:
+      - student-notebook-network
+
+  tester:
+    build:
+      context: ./backend
+      target: tester 
+    container_name: student-notebook-backend-tester
+
+    networks:
+      - student-notebook-network
+
+  nginx-proxy:
+    image: nginx:stable-alpine
+    container_name: student-notebook-nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - student-notebook-network
+
+volumes:
+  uploads-data:
+    driver: local
+  notes-data:
+    driver: local
 
 networks:
-  todo-app-network:
+  student-notebook-network:
     driver: bridge

@@ -3,20 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App</title>
+    <title>Student Notebook</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Todo List</h1>
-        <form id="task-form">
-            <input type="text" id="task-input" placeholder="Add a new task" required>
-            <button type="submit">Add Task</button>
-        </form>
-        <ul id="task-list">
-            <!-- Tasks will be loaded here -->
-        </ul>
+    <div class="main-container">
+        <div class="notes-list-panel">
+            <h1>My Notebook</h1>
+            <button id="new-note-btn">+ New Note</button>
+            <div class="filter-bar">
+                <button id="filter-all" class="active">All</button>
+                <button id="filter-drafts">Drafts</button>
+                <button id="filter-completed">Completed</button>
+            </div>
+            <ul id="note-list"></ul>
+        </div>
+
+        <div class="note-editor-panel">
+            <form id="note-form">
+                <input type="hidden" id="note-id">
+                <input type="text" id="note-title" placeholder="Note Title" required>
+                <textarea id="note-content" placeholder="Write your notes here..." required></textarea>
+                <input type="file" id="file-upload" multiple>
+                <div id="uploaded-files"></div>
+                <div class="form-actions">
+                    <button type="submit" id="save-note-btn">Save Note</button>
+                    <button type="button" id="save-draft-btn">Save as Draft</button>
+                    <button type="button" id="mark-completed-btn">Mark as Completed</button>
+                    <button type="button" id="cancel-edit-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
