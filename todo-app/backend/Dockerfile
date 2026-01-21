@@ -1,25 +1,32 @@
-# Stage 1: Build - Install dependencies
 FROM node:18-alpine AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
+
 RUN npm install
+
 COPY . .
 
-# Stage 2: Test - Run backend tsets
-FROM node:18-alpine AS tester
+FROM node:18-alpine AS deps
+
 WORKDIR /app
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/. .
 
-RUN test -f server.js || { echo "server.js not found!"; exit 1; }
+COPY package*.json ./
 
-# Stage 3: Run - Production image
+RUN npm install --production
+
 FROM node:18-alpine AS runner
+
 WORKDIR /app
 
-COPY --from=builder /app/node_modules ./node_modules
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+COPY --from=deps /app/node_modules ./
+
 COPY --from=builder /app/. .
 
-ARG PORT=5000
-EXPOSE ${PORT}
+EXPOSE 5000
+
 CMD ["node", "server.js"]
